@@ -35,6 +35,7 @@ defaults:
     minecraft: {size: [64, 64], break_speed: 100.0, logs: False, length: 36000}
     dmc: {size: [64, 64], repeat: 1, proprio: True, image: True, camera: -1}
     loconav: {size: [64, 64], repeat: 1, camera: -1}
+    gymnasium: {render_mode: ''}
 
   replay:
     size: 5e6
@@ -180,6 +181,15 @@ dmc_proprio:
   task: dmc_walker_walk
   env.dmc.image: False
   run: {steps: 1.1e6, train_ratio: 1024}
+
+lunarlander:
+  <<: *size1m
+  task: gymnasium_LunarLanderContinuous-v3
+  run: {steps: 1.0e6, envs: 8, train_ratio: 128}
+  agent.opt.lr: 1e-4
+  agent.opt.warmup: 2000
+  agent.imag_loss.actent: 1e-3
+  agent.policy.minstd: 0.15
 
 dmc_vision:
   task: dmc_walker_walk
