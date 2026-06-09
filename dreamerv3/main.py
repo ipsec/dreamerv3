@@ -214,6 +214,10 @@ def make_env(config, index, **overrides):
   if suite == 'memmaze':
     from embodied.envs import from_gym
     import memory_maze  # noqa
+  if suite == 'gymnasium' and task.startswith(('TraderEnv', 'SyntheticTraderEnv')):
+    import trader_marketdata  # noqa: F401 — registers gym ids
+  if suite == 'gymnasium' and task.startswith('MarketReplay'):
+    import trader_clear  # noqa: F401 — registers gym ids
   ctor = {
       'dummy': 'embodied.envs.dummy:Dummy',
       'gym': 'embodied.envs.from_gym:FromGym',

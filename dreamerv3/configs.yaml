@@ -35,7 +35,7 @@ defaults:
     minecraft: {size: [64, 64], break_speed: 100.0, logs: False, length: 36000}
     dmc: {size: [64, 64], repeat: 1, proprio: True, image: True, camera: -1}
     loconav: {size: [64, 64], repeat: 1, camera: -1}
-    gymnasium: {render_mode: ''}
+    gymnasium: {render_mode: '', data_dir: '', symbol: ''}
 
   replay:
     size: 5e6
@@ -183,13 +183,55 @@ dmc_proprio:
   run: {steps: 1.1e6, train_ratio: 1024}
 
 lunarlander:
-  <<: *size1m
-  task: gymnasium_LunarLanderContinuous-v3
-  run: {steps: 1.0e6, envs: 8, train_ratio: 128}
+  <<: *size12m
+  task: gymnasium_LunarLander-v3
+  run: {steps: 1.0e6, envs: 8, train_ratio: 64}
   agent.opt.lr: 1e-4
   agent.opt.warmup: 2000
+  agent.imag_loss.actent: 3e-4
+  agent.policy.minstd: 0.05
+
+trader_synthetic:
+  <<: *size12m
+  task: gymnasium_SyntheticTraderEnv-v0
+  run: {steps: 2.0e6, envs: 4, train_ratio: 128}
+  batch_length: 128
+  replay.size: 1e7
+  agent.opt.lr: 1e-4
+  agent.opt.warmup: 2000
+  agent.imag_length: 10
+  agent.horizon: 100
   agent.imag_loss.actent: 1e-3
-  agent.policy.minstd: 0.15
+  agent.policy.minstd: 0.05
+
+trader:
+  <<: *size12m
+  task: gymnasium_TraderEnv-v0
+  env.gymnasium.data_dir: /Users/fernando/dev/trader-marketdata/data/train
+  run: {steps: 5.0e6, envs: 4, train_ratio: 128}
+  batch_length: 128
+  replay.size: 1e7
+  agent.opt.lr: 1e-4
+  agent.opt.warmup: 2000
+  agent.imag_length: 10
+  agent.horizon: 100
+  agent.imag_loss.actent: 1e-3
+  agent.policy.minstd: 0.05
+
+trader_clear:
+  <<: *size12m
+  task: gymnasium_MarketReplay-v0
+  env.gymnasium.data_dir: /Users/fernando/dev/trader-clear/data/marketdata
+  env.gymnasium.symbol: PETR4
+  run: {steps: 5.0e6, envs: 4, train_ratio: 128}
+  batch_length: 128
+  replay.size: 1e7
+  agent.opt.lr: 1e-4
+  agent.opt.warmup: 2000
+  agent.imag_length: 10
+  agent.horizon: 100
+  agent.imag_loss.actent: 1e-3
+  agent.policy.minstd: 0.05
 
 dmc_vision:
   task: dmc_walker_walk
